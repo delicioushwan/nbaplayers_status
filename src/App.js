@@ -1,5 +1,6 @@
 import React from 'react';
 import List from './Pages/List';
+import Player from './Pages/Player';
 import {
   BrowserRouter as Router,
   Switch,
@@ -9,9 +10,8 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route exact path="/">
-          <List />
-        </Route>
+        <Route exact path="/" component={List} />
+        <Route path="/players/:id" component={Player} />
       </Switch>
     </Router>
   );

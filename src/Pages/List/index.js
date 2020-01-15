@@ -8,12 +8,20 @@ import {
   List,
 } from './styled';
 
-export default function () {
+export default function ({history}) {
   const [state, setState] = useState([]);
 
   async function getData () {
-    let data = await Axios.get('http://localhost:80')
-    await setState(data.data)
+    try {
+      console.log('rrr')
+
+      let data = await Axios.get('http://localhost:80/list')
+      console.log('rrr',data)
+      await setState(data.data)
+  
+    } catch(err) {
+      console.log(err)
+    }
   }
 
 
@@ -24,7 +32,7 @@ export default function () {
   return (
     <List>
       <FirstRow value={state[0]} />
-      <Row value={state} />
+      <Row value={state} history={history} />
       
     </List>
   );
