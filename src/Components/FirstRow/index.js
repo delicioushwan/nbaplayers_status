@@ -1,12 +1,6 @@
 import React from 'react';
-import {
-  Row, Col
-} from './styled';
+import { Row, Col } from './styled';
 
-export default function ({value}) {
-  return (
-    <Row>
-      {value && value.map((ele, i) => <Col key={i}>{ele}</Col>)}
-    </Row>
-  );
-};
+export default function({ value }) {
+  return <Row>{value && value.map((ele, i) => <Col key={i}>{ele}</Col>)}</Row>;
+}

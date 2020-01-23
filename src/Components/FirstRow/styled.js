@@ -11,11 +11,11 @@ export const Row = styled.div`
   color: black;
   font-size: 15px;
   height: 50px;
-`
+`;
 
 export const Col = styled.div`
   & + div {
     margin-left: 10px;
   }
   min-width: 40px;
-`
+`;
