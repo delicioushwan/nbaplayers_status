@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
 
-import Row from '../../Components/Row';
-import FirstRow from '../../Components/FirstRow';
+import Row from './Components/Row';
+import FirstRow from './Components/FirstRow';
 
 import { List } from './styled';
 
