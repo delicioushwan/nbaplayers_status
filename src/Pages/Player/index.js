@@ -1,12 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
 
 import Profile from './Components/Profile';
 import DataTable from './Components/DataTable';
-import Graph from './Components/Graph';
 
-import pieGraph from '../../Utils/Pie';
-import barGraph from '../../Utils/Bar';
+import PieGraph from '../../Components/Pie';
+import BarGraph from '../../Components/Bar';
 
 import { Container, ProfileContainer, GraphContainer, ButtonContainer, ComparisonBtn, TypeSelector, ToggleGraphBtn } from './styled';
 
@@ -45,8 +45,8 @@ export default function({ location: { pathname }, history, value }) {
           <Profile pic={pic} info={info} summary={summary} />
           {/* 컴포넌트화하기 그래프함수 만들고 동일한 크기와 스타일의 영역안에 그래프함수넣기*/}
           <GraphContainer>
-            <Graph graph={pieGraph} graphId="profilePie" data={data} />
-            <Graph graph={barGraph} graphId="profileBar" data={summary} />
+            <PieGraph graphId="profilePie" data={data} />
+            <BarGraph graphId="profileBar" data={summary} />
           </GraphContainer>
         </ProfileContainer>
         <ButtonContainer>
