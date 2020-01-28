@@ -7,6 +7,7 @@ import DataTable from './Components/DataTable';
 
 import PieGraph from '../../Components/Pie';
 import BarGraph from '../../Components/Bar';
+import PathGraph from '../../Components/Path';
 
 import { Container, ProfileContainer, GraphContainer, ButtonContainer, ComparisonBtn, TypeSelector, ToggleGraphBtn } from './styled';
 
@@ -18,6 +19,8 @@ export default function({ location: { pathname }, history, value }) {
     toggleBtn: false,
   });
 
+  const [select, setSelect] = useState(29);
+  console.log(select);
   function ToggleHandler(e) {
     const { name } = e.target;
     const { toggleBtn } = state;
@@ -41,7 +44,7 @@ export default function({ location: { pathname }, history, value }) {
   return (
     state.isLoading && (
       <Container>
-        <ProfileContainer>
+        <ProfileContainer id="profileContainer">
           <Profile pic={pic} info={info} summary={summary} />
           {/* 컴포넌트화하기 그래프함수 만들고 동일한 크기와 스타일의 영역안에 그래프함수넣기*/}
           <GraphContainer>
@@ -56,9 +59,20 @@ export default function({ location: { pathname }, history, value }) {
             </ToggleGraphBtn>
             <ComparisonBtn>비교하기</ComparisonBtn>
           </div>
-          {toggleBtn && <TypeSelector />}
+          {toggleBtn && (
+            <TypeSelector value={select} onChange={e => setSelect(e.target.value)}>
+              {data[0].map(
+                (stat, i) =>
+                  i > 4 && (
+                    <option key={i} value={i}>
+                      {stat}
+                    </option>
+                  ),
+              )}
+            </TypeSelector>
+          )}
         </ButtonContainer>
-        {toggleBtn ? null : <DataTable data={data} />}
+        {toggleBtn ? <PathGraph graphId="DataTableGraph" data={data} barChartType={select} /> : <DataTable data={data} />}
       </Container>
     )
   );

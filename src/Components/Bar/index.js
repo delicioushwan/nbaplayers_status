@@ -4,7 +4,6 @@ import * as d3 from 'd3';
 import { Container } from './styled';
 
 export default function({ data, graphId }) {
-  console.log('bar', data, graphId);
   function barGraph() {
     const dataSet = [];
     data[0].forEach((ele, i) => ele.includes('%') && dataSet.push({ label: data[0][i], value: (data[2][i] / 100).toFixed(2) }));

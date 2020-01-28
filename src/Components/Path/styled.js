@@ -1,6 +1,8 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
-  width: 100%;
-  height: 100%;
+  ${({ height }) => css`
+    width: 100%;
+    height: ${height - 100}px;
+  `}
 `;

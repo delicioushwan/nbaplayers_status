@@ -3,7 +3,6 @@ import * as d3 from 'd3';
 import { Container } from './styled';
 
 export default function({ data, graphId }) {
-  console.log('123123', data, graphId);
   function pieGraph() {
     const dataSet = [];
     const num = [11, 14, 18];

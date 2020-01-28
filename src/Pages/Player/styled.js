@@ -70,6 +70,7 @@ export const ButtonContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   line-height: 50px;
+  min-width: 400px;
 `;
 
 export const ToggleGraphBtn = styled(BasicBtn)``;
