@@ -66,6 +66,24 @@ async function scrapePlayer(alpha, player) {
     pic: [],
     bling: [],
   };
+
+  let summary = [[], [], []];
+  $('#info .stats_pullout')
+    .children()
+    .each((a, c) =>
+      $(c)
+        .children()
+        .each((q, w) =>
+          $(w)
+            .children()
+            .each((e, r) => {
+              console.log($(r).text());
+              summary[e].push($(r).text());
+            }),
+        ),
+    );
+  playerDetail.summary.push(...summary);
+
   $('#info')
     .children()
     .each((i, ele) => {
@@ -95,26 +113,18 @@ async function scrapePlayer(alpha, player) {
         case 1:
           $(ele)
             .children()
-            .each((a, q) => playerDetail.bling.push($(q).text()));
+            .each((a, q) =>
+              playerDetail.bling.push(
+                $(q)
+                  .text()
+                  .replace(/↵/g, '')
+                  .replace(/\s+/g, ''),
+              ),
+            );
           break;
         case 2:
           break;
         case 3:
-          break;
-        case 4:
-          let summary = [[], [], []];
-          $(ele)
-            .children()
-            .each((a, c) =>
-              $(c)
-                .children()
-                .each((q, w) =>
-                  $(w)
-                    .children()
-                    .each((e, r) => summary[e].push($(r).text())),
-                ),
-            );
-          playerDetail.summary.push(...summary);
           break;
         default:
           break;

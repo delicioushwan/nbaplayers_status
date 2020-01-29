@@ -2,8 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
 
+import useModal from '../../Components/Modal/useModal';
+import Modal from '../../Components/Modal';
 import Profile from './Components/Profile';
 import DataTable from './Components/DataTable';
+import ModalContent from './Components/ModalContent';
 
 import PieGraph from '../../Components/Pie';
 import BarGraph from '../../Components/Bar';
@@ -20,7 +23,6 @@ export default function({ location: { pathname }, history, value }) {
   });
 
   const [select, setSelect] = useState(29);
-  console.log(select);
   function ToggleHandler(e) {
     const { name } = e.target;
     const { toggleBtn } = state;
@@ -28,8 +30,6 @@ export default function({ location: { pathname }, history, value }) {
       ...state,
       [name]: !toggleBtn,
     });
-    console.log(name, value);
-    console.log(state);
   }
   async function getData() {
     let data = await Axios.get(`http://localhost:80${pathname}`);
@@ -38,14 +38,15 @@ export default function({ location: { pathname }, history, value }) {
   useEffect(() => {
     getData();
   }, []);
-  const { pic, info, summary } = state.playerDetail;
+  const { pic, info, summary, bling } = state.playerDetail;
   const { data, toggleBtn } = state;
+  const { isShowing, toggle } = useModal();
   console.log(state);
   return (
     state.isLoading && (
       <Container>
         <ProfileContainer id="profileContainer">
-          <Profile pic={pic} info={info} summary={summary} />
+          <Profile pic={pic} info={info} summary={summary} bling={bling} />
           {/* 컴포넌트화하기 그래프함수 만들고 동일한 크기와 스타일의 영역안에 그래프함수넣기*/}
           <GraphContainer>
             <PieGraph graphId="profilePie" data={data} />
@@ -57,7 +58,10 @@ export default function({ location: { pathname }, history, value }) {
             <ToggleGraphBtn name="toggleBtn" onClick={ToggleHandler}>
               {toggleBtn ? ' 표 ' : '그래프'}
             </ToggleGraphBtn>
-            <ComparisonBtn>비교하기</ComparisonBtn>
+            <ComparisonBtn onClick={toggle}>비교하기</ComparisonBtn>
+            <Modal isShowing={isShowing} hide={toggle} title="선수 비교">
+              <ModalContent value={value} />
+            </Modal>
           </div>
           {toggleBtn && (
             <TypeSelector value={select} onChange={e => setSelect(e.target.value)}>

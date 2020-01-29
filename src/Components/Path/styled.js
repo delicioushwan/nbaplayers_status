@@ -5,4 +5,18 @@ export const Container = styled.div`
     width: 100%;
     height: ${height - 100}px;
   `}
+  .grid line {
+    stroke: lightgrey;
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
+  }
+  .grid path {
+    stroke-width: 0;
+  }
+
+  .x-hover-line {
+    stroke: #6f257f;
+    stroke-width: 2px;
+    stroke-dasharray: 3, 3;
+  }
 `;

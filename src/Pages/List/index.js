@@ -21,7 +21,6 @@ export default function({ history }) {
   useEffect(() => {
     getData();
   }, []);
-
   return (
     <List>
       <FirstRow value={state[0]} />

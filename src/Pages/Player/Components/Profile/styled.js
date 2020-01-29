@@ -33,7 +33,7 @@ export const Detail = styled.div`
   }
 `;
 export const SummaryContainer = styled.div`
-  margin-top: 50px;
+  margin-top: ${({ bling }) => (bling ? '30px' : '50px')};
   height: 100px;
 `;
 
@@ -50,4 +50,11 @@ export const Row = styled.div`
     text-align: center;
     margin-top: 10px;
   }
+`;
+
+export const BlingContainer = styled.div`
+  margin-top: 20px;
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
 `;

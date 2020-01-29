@@ -7,7 +7,6 @@ import { Container } from './styled';
 export default function({ data, graphId, barChartType = 29 }) {
   const containerH = window.innerHeight - document.getElementById('profileContainer').offsetHeight;
   function pathGraph() {
-    console.log(barChartType);
     const dataSet = [];
     data.forEach(a => {
       let temp = {
@@ -80,9 +79,14 @@ export default function({ data, graphId, barChartType = 29 }) {
       .append('g')
       .style('font-size', 15)
       .style('font-weight', 'bold')
+      .attr('class', 'grid')
       .call(xAxis);
 
-    svg.append('g').call(yAxis);
+    svg
+      .append('g')
+      .style('font-size', 15)
+      .attr('class', 'grid')
+      .call(yAxis);
 
     const focus = svg
       .append('g')
@@ -103,7 +107,7 @@ export default function({ data, graphId, barChartType = 29 }) {
       .append('path')
       .attr('fill', 'none')
       .attr('stroke', '#ffab00')
-      .attr('stroke-width', '2')
+      .attr('stroke-width', '3')
       .attr('d', valueline(dataBody));
 
     const totalLength = path.node().getTotalLength();
@@ -124,6 +128,7 @@ export default function({ data, graphId, barChartType = 29 }) {
       .attr('id', d => `circle${d.season}`)
       .attr('cx', d => x(d.season))
       .attr('cy', d => y(d.stat))
+      .attr('fill', 'red')
       .attr('r', 5)
       .attr('class', 'circle');
 
