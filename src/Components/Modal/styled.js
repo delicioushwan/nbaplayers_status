@@ -29,9 +29,9 @@ export const Modal = styled.div`
   position: relative;
   margin: 1.75rem auto;
   border-radius: 3px;
-  max-width: 500px;
+  width: 500px;
   padding: 2rem;
-  min-height: 800px;
+  height: 500px;
 `;
 
 export const ModalHeader = styled.div`

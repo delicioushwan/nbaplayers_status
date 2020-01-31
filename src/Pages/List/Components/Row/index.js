@@ -11,8 +11,15 @@ export default function({ value, history }) {
       {value.map(
         (player, i) =>
           i !== 0 && (
-            <Row onClick={onClickToPlayer.bind(null, player[0])} key={player[1]}>
-              {player.map((stat, j) => j !== 0 && <Col key={j}>{stat}</Col>)}
+            <Row onClick={onClickToPlayer.bind(null, player[0])} num={i} key={player[1]}>
+              {player.map(
+                (stat, j) =>
+                  j !== 0 && (
+                    <Col key={j}>
+                      <div>{stat}</div>
+                    </Col>
+                  ),
+              )}
             </Row>
           ),
       )}

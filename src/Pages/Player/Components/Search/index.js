@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Input = styled.input`
-  width: 70%;
+  width: 80%;
   height: 50px;
   font-size: 20px;
   padding: 0;
@@ -27,10 +27,12 @@ const Button = styled.button`
 export default function({ button, onClickHandler, inputHandler, buttonDisable }) {
   return (
     <div>
-      <Input placeholder="검색어를 입력해 주세요" onChange={inputHandler} />
-      <Button onClick={onClickHandler} disabled={buttonDisable}>
-        {buttonDisable ? '로딩!' : button}
-      </Button>
+      <form onSubmit={onClickHandler}>
+        <Input type="text" placeholder="검색어를 입력해 주세요" onChange={inputHandler} />
+        <Button type="submit" disabled={buttonDisable}>
+          {buttonDisable ? '로딩!' : button}
+        </Button>
+      </form>
     </div>
   );
 }

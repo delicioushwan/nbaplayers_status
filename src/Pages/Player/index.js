@@ -20,6 +20,7 @@ export default function({ location: { pathname }, history, value }) {
     playerDetail: {},
     data: [],
     toggleBtn: false,
+    additionalData: [],
   });
 
   const [select, setSelect] = useState(29);
@@ -39,7 +40,7 @@ export default function({ location: { pathname }, history, value }) {
     getData();
   }, []);
   const { pic, info, summary, bling } = state.playerDetail;
-  const { data, toggleBtn } = state;
+  const { data, toggleBtn, additionalData } = state;
   const { isShowing, toggle } = useModal();
   console.log(state);
   return (
@@ -60,7 +61,7 @@ export default function({ location: { pathname }, history, value }) {
             </ToggleGraphBtn>
             <ComparisonBtn onClick={toggle}>비교하기</ComparisonBtn>
             <Modal isShowing={isShowing} hide={toggle} title="선수 비교">
-              <ModalContent value={value} />
+              <ModalContent value={value} addData={state} setGraphData={setState} hide={toggle} />
             </Modal>
           </div>
           {toggleBtn && (
@@ -76,7 +77,11 @@ export default function({ location: { pathname }, history, value }) {
             </TypeSelector>
           )}
         </ButtonContainer>
-        {toggleBtn ? <PathGraph graphId="DataTableGraph" data={data} barChartType={select} /> : <DataTable data={data} />}
+        {toggleBtn ? (
+          <PathGraph graphId="DataTableGraph" data={data} barChartType={select} addData={additionalData} />
+        ) : (
+          <DataTable data={data} />
+        )}
       </Container>
     )
   );

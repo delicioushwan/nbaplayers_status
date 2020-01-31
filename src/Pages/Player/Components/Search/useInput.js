@@ -7,10 +7,7 @@ const useModal = () => {
     setInput(e.target.value);
   }
 
-  return {
-    inputValue,
-    inputHandler,
-  };
+  return [inputValue, inputHandler];
 };
 
 export default useModal;

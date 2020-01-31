@@ -4,17 +4,21 @@ import * as d3 from 'd3';
 
 import { Container } from './styled';
 
-export default function({ data, graphId, barChartType = 29 }) {
+export default function({ data, graphId, barChartType = 29, addData }) {
   const containerH = window.innerHeight - document.getElementById('profileContainer').offsetHeight;
   function pathGraph() {
     const dataSet = [];
-    data.forEach(a => {
-      let temp = {
-        season: a[0],
-        stat: a[barChartType],
-      };
-      dataSet.push(temp);
-    });
+    const setData = function(data, dataSet) {
+      data.forEach(a => {
+        let temp = {
+          season: a[0],
+          stat: a[barChartType],
+        };
+        dataSet.push(temp);
+      });
+    };
+
+    setData(data, dataSet);
     console.log(dataSet);
     const dataBody = dataSet.slice(1);
     const margin = 40;
@@ -58,12 +62,11 @@ export default function({ data, graphId, barChartType = 29 }) {
       .axisLeft(y)
       .tickSize(-width)
       .tickFormat('');
-    // .ticks(10);
+
     const xAxisGrid = d3
       .axisBottom(x)
       .tickSize(height)
       .tickFormat('');
-    // .ticks(10);
 
     svg
       .append('g')
@@ -173,6 +176,22 @@ export default function({ data, graphId, barChartType = 29 }) {
       circle.setAttribute('r', '5');
       title.style.visibility = 'hidden';
       focus.style('display', 'none');
+    }
+
+    if (addData.length > 0) {
+      console.log('adddata-----------', addData);
+      const color = d3.scaleOrdinal(d3.schemeAccent);
+      addData.forEach((ele, i) => {
+        console.log(ele);
+        const dataAdd = [];
+        setData(ele.data.data.slice(1), dataAdd);
+        svg
+          .append('path')
+          .attr('fill', 'none')
+          .attr('stroke', d => color(i))
+          .attr('stroke-width', '3')
+          .attr('d', valueline(dataAdd));
+      });
     }
   }
   function barUpdate() {
