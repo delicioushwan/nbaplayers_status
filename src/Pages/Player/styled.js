@@ -62,6 +62,7 @@ export const GraphContainer = styled.div`
   display: flex;
   min-width: 600px;
   width: 100%;
+  min-height: 400px;
 `;
 
 export const ButtonContainer = styled.div`

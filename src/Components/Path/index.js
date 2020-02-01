@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 
 import { Container } from './styled';
 
-export default function({ data, graphId, barChartType = 29, addData }) {
+export default function({ data, graphId, barChartType = 29, addData, playerName }) {
   const containerH = window.innerHeight - document.getElementById('profileContainer').offsetHeight;
   function pathGraph() {
     const dataSet = [];
@@ -17,13 +17,50 @@ export default function({ data, graphId, barChartType = 29, addData }) {
         dataSet.push(temp);
       });
     };
-
     setData(data, dataSet);
-    console.log(dataSet);
+
     const dataBody = dataSet.slice(1);
     const margin = 40;
     const width = document.getElementById(graphId).offsetWidth - margin * 2;
     const height = document.getElementById(graphId).offsetHeight - margin * 2;
+    const xData = function() {
+      if (addData.length === 0) {
+        return dataBody;
+      } else {
+        let dataSet = [];
+        let max = +dataBody.length;
+        let data = dataBody;
+        addData.forEach(ele => {
+          let element = ele.data.data.slice(1);
+          if (+element.length > max) {
+            dataSet = [];
+            max = +element.length;
+            data = element;
+            setData(data, dataSet);
+          }
+        });
+        return dataSet.length === 0 ? data : dataSet;
+      }
+    };
+    const yData = function() {
+      if (addData.length === 0) {
+        return dataBody;
+      } else {
+        let max = +d3.max(dataBody, d => d.stat);
+        let data = dataBody;
+        addData.forEach(ele => {
+          let element = ele.data.data;
+          let temp = [];
+          setData(element, temp);
+          let hightest = +d3.max(temp.slice(1), d => d.stat);
+          if (hightest > max) {
+            max = hightest;
+            data = temp;
+          }
+        });
+        return data;
+      }
+    };
 
     const svg = d3
       .select(`#${graphId}`)
@@ -33,19 +70,18 @@ export default function({ data, graphId, barChartType = 29, addData }) {
       .append('g')
       .attr('transform', `translate(${margin}, ${margin})`);
 
-    const xScale = dataBody.map((x, i) =>
+    const xScale = xData().map((x, i) =>
       d3
         .scaleLinear()
         .range([0, width])
-        .domain([0, dataBody.length - 1])(i),
+        .domain([0, xData().length - 1])(i),
     );
-
     const x = d3.scaleOrdinal().range(xScale);
     const y = d3.scaleLinear().range([height, 0]);
-    x.domain(dataBody.map(d => d.season));
+    x.domain(xData().map(d => d.season));
     y.domain([
       0,
-      d3.max(dataSet, d => {
+      d3.max(yData(), d => {
         if (d.stat === 'PF') return 5;
         if (d.stat.includes('%')) return 1;
         return Math.ceil(d.stat);
@@ -141,8 +177,22 @@ export default function({ data, graphId, barChartType = 29, addData }) {
     svg
       .append('text')
       .attr('x', -10)
-      .attr('y', -10)
+      .attr('y', -margin / 2)
       .text(dataSet[0].stat);
+
+    // const pathTag = svg.append('g');
+
+    // const main = pathTag.append('g').attr('transform', `translate(${width / 2 - margin} , ${-margin} )`);
+    // main
+    //   .append('rect')
+    //   .attr('width', 10)
+    //   .attr('height', 10)
+    //   .attr('fill', 'red');
+    // main
+    //   .append('text')
+    //   .text(playerName)
+    //   .attr('text-anchor', 'middle')
+    //   .attr('dy', margin - 10);
     svg
       .selectAll('.label')
       .data(dataBody)
@@ -178,23 +228,46 @@ export default function({ data, graphId, barChartType = 29, addData }) {
       focus.style('display', 'none');
     }
 
-    if (addData.length > 0) {
-      console.log('adddata-----------', addData);
-      const color = d3.scaleOrdinal(d3.schemeAccent);
-      addData.forEach((ele, i) => {
-        console.log(ele);
-        const dataAdd = [];
-        setData(ele.data.data.slice(1), dataAdd);
+    const color = d3.scaleOrdinal(d3.schemeAccent);
+    addData.forEach((ele, i) => {
+      const dataAdd = [];
+      setData(ele.data.data.slice(1), dataAdd);
+      dataAdd.length > 1 &&
         svg
           .append('path')
           .attr('fill', 'none')
-          .attr('stroke', d => color(i))
+          .attr('stroke', color(i))
           .attr('stroke-width', '3')
           .attr('d', valueline(dataAdd));
-      });
-    }
+
+      svg
+        .selectAll('.dot')
+        .data(dataAdd)
+        .enter()
+        .append('circle')
+        .attr('id', d => `circle${d.season}`)
+        .attr('cx', d => x(d.season))
+        .attr('cy', d => y(d.stat))
+        .attr('fill', d => color(i))
+        .attr('r', 0)
+        .transition()
+        .duration(2500)
+        .attr('r', 5);
+
+      // const sub = pathTag.append('g').attr('transform', `translate(${width / 2 + margin * i} , ${-margin} )`);
+      // sub
+      //   .append('rect')
+      //   .attr('width', 10)
+      //   .attr('height', 10)
+      //   .attr('fill', color(i));
+      // sub
+      //   .append('text')
+      //   .text(ele.data.playerDetail.info[0])
+      //   .attr('text-anchor', 'middle')
+      //   .attr('dy', margin - 10);
+    });
   }
-  function barUpdate() {
+  function pathUpdate() {
     d3.select(`#${graphId}`)
       .select('svg')
       .remove();
@@ -202,7 +275,7 @@ export default function({ data, graphId, barChartType = 29, addData }) {
   }
 
   useEffect(() => pathGraph(), []);
-  useEffect(() => barUpdate(), [barChartType]);
+  useEffect(() => pathUpdate(), [barChartType, addData]);
 
   return <Container id={graphId} height={containerH} />;
 }

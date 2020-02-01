@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 export const Container = styled.div`
   ${({ height }) => css`
     width: 100%;
-    height: ${height - 100}px;
+    height: ${height > 400 ? height - 100 : 300}px;
   `}
   .grid line {
     stroke: lightgrey;

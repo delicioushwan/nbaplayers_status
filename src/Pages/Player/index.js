@@ -48,7 +48,6 @@ export default function({ location: { pathname }, history, value }) {
       <Container>
         <ProfileContainer id="profileContainer">
           <Profile pic={pic} info={info} summary={summary} bling={bling} />
-          {/* 컴포넌트화하기 그래프함수 만들고 동일한 크기와 스타일의 영역안에 그래프함수넣기*/}
           <GraphContainer>
             <PieGraph graphId="profilePie" data={data} />
             <BarGraph graphId="profileBar" data={summary} />
@@ -78,7 +77,7 @@ export default function({ location: { pathname }, history, value }) {
           )}
         </ButtonContainer>
         {toggleBtn ? (
-          <PathGraph graphId="DataTableGraph" data={data} barChartType={select} addData={additionalData} />
+          <PathGraph id="test" graphId="DataTableGraph" data={data} barChartType={select} addData={additionalData} playerName={info[0]} />
         ) : (
           <DataTable data={data} />
         )}
