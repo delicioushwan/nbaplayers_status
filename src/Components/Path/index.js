@@ -52,7 +52,7 @@ export default function({ data, graphId, barChartType = 29, addData, playerName 
           let element = ele.data.data;
           let temp = [];
           setData(element, temp);
-          let hightest = +d3.max(temp.slice(1), d => d.stat);
+          let hightest = +d3.max(temp.slice(1), d => +d.stat);
           if (hightest > max) {
             max = hightest;
             data = temp;
@@ -77,7 +77,7 @@ export default function({ data, graphId, barChartType = 29, addData, playerName 
         .domain([0, xData().length - 1])(i),
     );
     const x = d3.scaleOrdinal().range(xScale);
-    const y = d3.scaleLinear().range([height, 0]);
+    const y = d3.scaleLinear().range([height, margin]);
     x.domain(xData().map(d => d.season));
     y.domain([
       0,
@@ -89,7 +89,7 @@ export default function({ data, graphId, barChartType = 29, addData, playerName 
     ]);
     const xAxis = d3
       .axisBottom(x)
-      .tickSize(height)
+      .tickSize(height - margin)
       .tickPadding(10);
 
     const yAxis = d3.axisLeft(y);
@@ -99,11 +99,6 @@ export default function({ data, graphId, barChartType = 29, addData, playerName 
       .tickSize(-width)
       .tickFormat('');
 
-    const xAxisGrid = d3
-      .axisBottom(x)
-      .tickSize(height)
-      .tickFormat('');
-
     svg
       .append('g')
       .attr('class', 'grid')
@@ -111,13 +106,9 @@ export default function({ data, graphId, barChartType = 29, addData, playerName 
 
     svg
       .append('g')
-      .attr('class', 'grid')
-      .call(xAxisGrid);
-
-    svg
-      .append('g')
       .style('font-size', 15)
       .style('font-weight', 'bold')
+      .attr('transform', `translate(0,${margin})`)
       .attr('class', 'grid')
       .call(xAxis);
 
@@ -137,10 +128,34 @@ export default function({ data, graphId, barChartType = 29, addData, playerName 
       .attr('y1', 0)
       .attr('y2', height);
 
+    addData.length !== 0 &&
+      focus
+        .selectAll('.addLabel')
+        .data(addData)
+        .join('g')
+        .attr('id', (d, i) => `addedTitle${i}`)
+        .append('text');
+
+    const pathTag = svg.append('g');
+
+    const main = pathTag.append('g').attr('transform', `translate(${width / 2 - margin * 2} , ${-margin + 10} )`);
+    main
+      .append('rect')
+      .attr('width', 10)
+      .attr('height', 10)
+      .attr('fill', 'red');
+    main
+      .append('text')
+      .text(playerName)
+      .attr('dx', 20)
+      .attr('dy', 10);
+
     const valueline = d3
       .line()
       .x(d => x(d.season))
       .y(d => y(d.stat));
+
+    addition();
 
     const path = svg
       .append('path')
@@ -162,8 +177,7 @@ export default function({ data, graphId, barChartType = 29, addData, playerName 
     const circle = svg
       .selectAll('.dot')
       .data(dataBody)
-      .enter()
-      .append('circle')
+      .join('circle')
       .attr('id', d => `circle${d.season}`)
       .attr('cx', d => x(d.season))
       .attr('cy', d => y(d.stat))
@@ -180,31 +194,17 @@ export default function({ data, graphId, barChartType = 29, addData, playerName 
       .attr('y', -margin / 2)
       .text(dataSet[0].stat);
 
-    // const pathTag = svg.append('g');
-
-    // const main = pathTag.append('g').attr('transform', `translate(${width / 2 - margin} , ${-margin} )`);
-    // main
-    //   .append('rect')
-    //   .attr('width', 10)
-    //   .attr('height', 10)
-    //   .attr('fill', 'red');
-    // main
-    //   .append('text')
-    //   .text(playerName)
-    //   .attr('text-anchor', 'middle')
-    //   .attr('dy', margin - 10);
     svg
       .selectAll('.label')
       .data(dataBody)
-      .enter()
-      .append('text')
+      .join('text')
       .attr('class', 'label')
       .attr('x', d => x(d.season))
       .attr('id', d => `title${d.season}`)
       .attr('y', d => y(d.stat) + 0.1)
       .attr('dy', '-.7em')
       .attr('text-anchor', 'middle')
-      .style('fill', '#898989')
+      .style('fill', 'black')
       .style('visibility', 'hidden')
       .text(d => d.stat);
 
@@ -218,6 +218,17 @@ export default function({ data, graphId, barChartType = 29, addData, playerName 
       focus.attr('transform', `translate(${x(valueX)} , ${y(valueY)} )`);
       focus.select('.x-hover-line').attr('y2', height - y(valueY));
       focus.style('display', null);
+      addData.forEach((ele, i) => {
+        const element = ele.data;
+        console.log(element);
+        console.log(element.data, d + 1, barChartType);
+        focus.select(`#addedTitle${i}`).attr('transform', `translate(${x(valueX)} ,${y(element.data[d + 1][barChartType])} )`);
+
+        focus
+          .select(`#addedTitle${i}`)
+          .text(`${element.data[d + 1][barChartType]}`)
+          .attr('fill', '#898989');
+      });
     }
 
     function handleMouseOut(e) {
@@ -228,44 +239,44 @@ export default function({ data, graphId, barChartType = 29, addData, playerName 
       focus.style('display', 'none');
     }
 
-    const color = d3.scaleOrdinal(d3.schemeAccent);
-    addData.forEach((ele, i) => {
-      const dataAdd = [];
-      setData(ele.data.data.slice(1), dataAdd);
-      dataAdd.length > 1 &&
+    function addition() {
+      const color = d3.scaleOrdinal(d3.schemeAccent);
+      addData.forEach((ele, i) => {
+        const dataAdd = [];
+        setData(ele.data.data.slice(1), dataAdd);
+        dataAdd.length > 1 &&
+          svg
+            .append('path')
+            .attr('fill', 'none')
+            .attr('stroke', color(i))
+            .attr('stroke-width', '3')
+            .attr('d', valueline(dataAdd));
+
         svg
-          .append('path')
-          .attr('fill', 'none')
-          .attr('stroke', color(i))
-          .attr('stroke-width', '3')
-          .attr('d', valueline(dataAdd));
+          .selectAll('.subDot')
+          .data(dataAdd)
+          .join('circle')
+          .attr('cx', d => x(d.season))
+          .attr('cy', d => y(d.stat))
+          .attr('fill', d => color(i))
+          .attr('r', 0)
+          .transition()
+          .duration(2500)
+          .attr('r', 5);
 
-      svg
-        .selectAll('.dot')
-        .data(dataAdd)
-        .enter()
-        .append('circle')
-        .attr('id', d => `circle${d.season}`)
-        .attr('cx', d => x(d.season))
-        .attr('cy', d => y(d.stat))
-        .attr('fill', d => color(i))
-        .attr('r', 0)
-        .transition()
-        .duration(2500)
-        .attr('r', 5);
-
-      // const sub = pathTag.append('g').attr('transform', `translate(${width / 2 + margin * i} , ${-margin} )`);
-      // sub
-      //   .append('rect')
-      //   .attr('width', 10)
-      //   .attr('height', 10)
-      //   .attr('fill', color(i));
-      // sub
-      //   .append('text')
-      //   .text(ele.data.playerDetail.info[0])
-      //   .attr('text-anchor', 'middle')
-      //   .attr('dy', margin - 10);
-    });
+        const sub = pathTag.append('g').attr('transform', `translate(${width / 2 - margin * 2} , ${-30 + (i + 1) * 15} )`);
+        sub
+          .append('rect')
+          .attr('width', 10)
+          .attr('height', 10)
+          .attr('fill', color(i));
+        sub
+          .append('text')
+          .text(ele.data.playerDetail.info[0])
+          .attr('dx', 20)
+          .attr('dy', 10);
+      });
+    }
   }
   function pathUpdate() {
     d3.select(`#${graphId}`)

@@ -42,7 +42,6 @@ export default function({ location: { pathname }, history, value }) {
   const { pic, info, summary, bling } = state.playerDetail;
   const { data, toggleBtn, additionalData } = state;
   const { isShowing, toggle } = useModal();
-  console.log(state);
   return (
     state.isLoading && (
       <Container>
