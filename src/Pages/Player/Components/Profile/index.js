@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Profile, Photo, Detail, Row, SummaryContainer, BlingContainer } from './styled';
 
-export default function({ pic, info, summary, bling }) {
+export default function({ pic, info = [], summary = [], bling = [] }) {
   return (
     <div>
       <Profile>

@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 
 import { Container } from './styled';
 
-export default function({ data, graphId, barChartType = 29, addData, playerName }) {
+export default function({ data, graphId, pathChartType = 29, addData, playerName }) {
   const containerH = window.innerHeight - document.getElementById('profileContainer').offsetHeight;
   function pathGraph() {
     const dataSet = [];
@@ -12,7 +12,7 @@ export default function({ data, graphId, barChartType = 29, addData, playerName 
       data.forEach(a => {
         let temp = {
           season: a[0],
-          stat: a[barChartType],
+          stat: a[pathChartType],
         };
         dataSet.push(temp);
       });
@@ -118,23 +118,19 @@ export default function({ data, graphId, barChartType = 29, addData, playerName 
       .attr('class', 'grid')
       .call(yAxis);
 
-    const focus = svg
-      .append('g')
-      .attr('class', 'focus')
-      .style('display', 'none');
+    const focus = svg.append('g').style('display', 'none');
     focus
       .append('line')
       .attr('class', 'x-hover-line')
       .attr('y1', 0)
       .attr('y2', height);
 
-    addData.length !== 0 &&
-      focus
-        .selectAll('.addLabel')
-        .data(addData)
-        .join('g')
-        .attr('id', (d, i) => `addedTitle${i}`)
-        .append('text');
+    const additions = svg
+      .selectAll('.addLabel')
+      .data(addData)
+      .join('g')
+      .attr('class', 'addLabel')
+      .style('display', 'none');
 
     const pathTag = svg.append('g');
 
@@ -213,22 +209,32 @@ export default function({ data, graphId, barChartType = 29, addData, playerName 
       const valueY = dataSet[d + 1].stat;
       const title = document.getElementById(`title${e.season}`);
       const circle = document.getElementById(`circle${e.season}`);
+      function getValue(d) {
+        let index = undefined;
+        const data = d.data.data;
+
+        for (let i = 0; i < data.length; i++) {
+          if (data[i][0] === e.season) {
+            index = i;
+            break;
+          }
+        }
+        const dy = data[index] && data[index][pathChartType];
+        return dy;
+      }
       circle.setAttribute('r', '10');
       title.style.visibility = 'visible';
       focus.attr('transform', `translate(${x(valueX)} , ${y(valueY)} )`);
       focus.select('.x-hover-line').attr('y2', height - y(valueY));
       focus.style('display', null);
-      addData.forEach((ele, i) => {
-        const element = ele.data;
-        console.log(element);
-        console.log(element.data, d + 1, barChartType);
-        focus.select(`#addedTitle${i}`).attr('transform', `translate(${x(valueX)} ,${y(element.data[d + 1][barChartType])} )`);
-
-        focus
-          .select(`#addedTitle${i}`)
-          .text(`${element.data[d + 1][barChartType]}`)
-          .attr('fill', '#898989');
-      });
+      additions.style('display', null);
+      additions
+        .attr('transform', da => `translate(${x(valueX)} , ${y(getValue(da))} )`)
+        .append('text')
+        .text(da => getValue(da))
+        .attr('fill', '#898989')
+        .attr('dy', '-.7em')
+        .attr('text-anchor', 'middle');
     }
 
     function handleMouseOut(e) {
@@ -237,6 +243,10 @@ export default function({ data, graphId, barChartType = 29, addData, playerName 
       circle.setAttribute('r', '5');
       title.style.visibility = 'hidden';
       focus.style('display', 'none');
+      d3.selectAll('.addLabel')
+        .selectAll('text')
+        .remove();
+      additions.style('display', 'none');
     }
 
     function addition() {
@@ -286,7 +296,7 @@ export default function({ data, graphId, barChartType = 29, addData, playerName 
   }
 
   useEffect(() => pathGraph(), []);
-  useEffect(() => pathUpdate(), [barChartType, addData]);
+  useEffect(() => pathUpdate(), [pathChartType, addData]);
 
   return <Container id={graphId} height={containerH} />;
 }
