@@ -1,7 +1,9 @@
 # nbaplayers_status
 
-npm install \n
-npm start 클라이언트실행 \n
+npm install
+
+npm start 클라이언트실행
+
 node server.js 서버실행 (크롤링)
 
 
