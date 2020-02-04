@@ -203,7 +203,7 @@ export default function({ data, graphId, pathChartType = 29, addData, playerName
       .style('fill', 'black')
       .style('visibility', 'hidden')
       .text(d => d.stat);
-
+    console.log(addData);
     function handleMouseOver(e, d) {
       const valueX = dataSet[d + 1].season;
       const valueY = dataSet[d + 1].stat;
@@ -219,7 +219,7 @@ export default function({ data, graphId, pathChartType = 29, addData, playerName
             break;
           }
         }
-        const dy = data[index] && data[index][pathChartType];
+        const dy = data[index] ? data[index][pathChartType] : undefined;
         return dy;
       }
       circle.setAttribute('r', '10');
@@ -229,7 +229,7 @@ export default function({ data, graphId, pathChartType = 29, addData, playerName
       focus.style('display', null);
       additions.style('display', null);
       additions
-        .attr('transform', da => `translate(${x(valueX)} , ${y(getValue(da))} )`)
+        .attr('transform', da => (getValue(da) ? `translate(${x(valueX)} , ${y(getValue(da))} )` : null))
         .append('text')
         .text(da => getValue(da))
         .attr('fill', '#898989')
@@ -254,7 +254,7 @@ export default function({ data, graphId, pathChartType = 29, addData, playerName
       addData.forEach((ele, i) => {
         const dataAdd = [];
         setData(ele.data.data.slice(1), dataAdd);
-        dataAdd.length > 1 &&
+        dataAdd.length > 0 &&
           svg
             .append('path')
             .attr('fill', 'none')
